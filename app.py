@@ -2,6 +2,7 @@ import dash
 from dash import html, dcc, Input, Output
 import plotly.graph_objects as go
 import pandas as pd
+import os
 from funciones import (
     cargar_datos,
     calcular_metricas,
@@ -14,8 +15,14 @@ from funciones import (
     crear_grafico_radar_eficiencia
 )
 
-# Inicializar la aplicación Dash
-app = dash.Dash(__name__)
+# Inicializar la aplicación Dash con configuración de assets
+app = dash.Dash(__name__, 
+                assets_folder='assets',
+                assets_url_path='/assets',
+                suppress_callback_exceptions=True)
+
+# Importante para Render.com
+server = app.server
 
 # Cargar y procesar los datos
 df_gastos, df_presupuesto, df_calendario, df_consolidado = cargar_datos()
@@ -36,32 +43,33 @@ app.layout = html.Div([
     html.Div([
         # Fila superior con métricas principales
         html.Div([
-            # Columna izquierda - Velocímetro
+            # Columna izquierda - Velocímetro con contenedor fijo
             html.Div([
-                dcc.Graph(
-                    id='velocimetro',
-                    figure=crear_grafico_velocimetro(total_gastado, total_presupuesto),
-                    className='gauge-chart',
-                    config={'displayModeBar': False, 'responsive': True},
-                    style={'height': '240px', 'width': '100%'}
-                )
+                html.Div([
+                    dcc.Graph(
+                        id='velocimetro',
+                        figure=crear_grafico_velocimetro(total_gastado, total_presupuesto),
+                        className='gauge-chart',
+                        config={'displayModeBar': False, 'responsive': True}
+                    )
+                ], style={'height': '220px', 'width': '100%', 'position': 'relative', 'overflow': 'hidden'})
             ], className='metric-card-large gauge-container'),
             
-            # Columnas de métricas - mismo tamaño que el velocímetro
+            # Columnas de métricas - usando iconos con CSS en lugar de imágenes
             html.Div([
-                html.Img(src='/assets/images/percentage-icon.png', className='metric-icon'),
+                html.Div('📊', className='metric-icon-emoji'),
                 html.H2(f'{porcentaje_gasto:.1f} %', className='metric-value'),
                 html.P('% DE GASTO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/budget-icon.png', className='metric-icon'),
+                html.Div('💰', className='metric-icon-emoji'),
                 html.H2(f'{saldo:,.0f}', className='metric-value'),
                 html.P('SALDO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/money-icon.png', className='metric-icon'),
+                html.Div('💵', className='metric-icon-emoji'),
                 html.H2(f'{total_presupuesto:,.0f}', className='metric-value'),
                 html.P('TOTAL PRESUPUESTO', className='metric-label')
             ], className='metric-card-large')
@@ -74,7 +82,8 @@ app.layout = html.Div([
                 html.H3('Total Gastado por Categoría', className='chart-title'),
                 dcc.Graph(
                     id='grafico-categorias',
-                    figure=crear_grafico_barras_categoria(df_consolidado)
+                    figure=crear_grafico_barras_categoria(df_consolidado),
+                    config={'displayModeBar': False}
                 )
             ], className='chart-container col-3'),
             
@@ -83,7 +92,8 @@ app.layout = html.Div([
                 html.H3('Total Gastado por Mes', className='chart-title'),
                 dcc.Graph(
                     id='grafico-meses',
-                    figure=crear_grafico_lineas_mes(df_consolidado)
+                    figure=crear_grafico_lineas_mes(df_consolidado),
+                    config={'displayModeBar': False}
                 )
             ], className='chart-container col-4'),
             
@@ -92,7 +102,8 @@ app.layout = html.Div([
                 html.H3('Total Gastado por Semestre', className='chart-title'),
                 dcc.Graph(
                     id='grafico-semestre',
-                    figure=crear_grafico_anillo_semestre(df_consolidado)
+                    figure=crear_grafico_anillo_semestre(df_consolidado),
+                    config={'displayModeBar': False}
                 )
             ], className='chart-container col-2')
         ], className='middle-section'),
@@ -134,7 +145,7 @@ app.layout = html.Div([
     ], className='main-container')
 ], className='dashboard')
 
-# Callback para actualizar el dashboard (si necesitas interactividad futura)
+# Callback para actualizar el dashboard
 @app.callback(
     Output('velocimetro', 'figure'),
     Input('velocimetro', 'id')
@@ -143,5 +154,7 @@ def update_gauge(id):
     return crear_grafico_velocimetro(total_gastado, total_presupuesto)
 
 if __name__ == '__main__':
-
-    app.run(debug=True)
+    # Obtener el puerto de la variable de entorno para Render
+    port = int(os.environ.get('PORT', 8050))
+    # En producción, usar host='0.0.0.0' para que sea accesible externamente
+    app.run_server(debug=False, host='0.0.0.0', port=port)
