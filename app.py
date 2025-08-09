@@ -143,4 +143,5 @@ def update_gauge(id):
     return crear_grafico_velocimetro(total_gastado, total_presupuesto)
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+
+    app.run(debug=True)
