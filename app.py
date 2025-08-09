@@ -13,6 +13,8 @@ from funciones import (
     crear_grafico_columnas_trimestre,
     crear_grafico_radar_eficiencia
 )
+
+# ICONOS SVG EN BASE64 (Funcionan en cualquier servidor)
 PERCENTAGE_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxjaXJjbGUgY3g9IjE5IiBjeT0iNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjUiIGN5PSIxOSIgcj0iMiIvPjxwYXRoIGQ9Ik01IDctMTkgMTciLz48L3N2Zz4="
 
 BUDGET_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxyZWN0IHg9IjIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNCIgcng9IjIiIHJ5PSIyIi8+PHBhdGggZD0iTTEyIDExdjYiLz48cGF0aCBkPSJNOSAxNGg2Ii8+PC9zdmc+"
@@ -20,10 +22,10 @@ BUDGET_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmc
 MONEY_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxsaW5lIHgxPSIxMiIgeTE9IjEiIHgyPSIxMiIgeTI9IjIzIi8+PHBhdGggZD0iTTE3IDVINy41YTMuNSAzLjUgMCAwIDAgMCA3aDVhMy41IDMuNSAwIDAgMSAwIDdINiIvPjwvc3ZnPg=="
 
 # Inicializar la aplicación Dash
-# Inicializar la aplicación Dash
-app = dash.Dash(__name__, 
-                assets_folder='assets',  # Especifica la carpeta de assets
-                assets_url_path='/assets/') 
+app = dash.Dash(__name__)
+
+# Para Render
+server = app.server
 
 # Cargar y procesar los datos
 df_gastos, df_presupuesto, df_calendario, df_consolidado = cargar_datos()
@@ -55,7 +57,7 @@ app.layout = html.Div([
                 )
             ], className='metric-card-large gauge-container'),
             
-            # Columnas de métricas - mismo tamaño que el velocímetro
+            # Columnas de métricas - CON ICONOS SVG EN BASE64
             html.Div([
                 html.Img(src=PERCENTAGE_ICON, className='metric-icon'),
                 html.H2(f'{porcentaje_gasto:.1f} %', className='metric-value'),
@@ -123,8 +125,7 @@ app.layout = html.Div([
                     html.H3('Total Gastado por Trimestre', className='chart-title'),
                     dcc.Graph(
                         id='grafico-trimestre',
-                        figure=crear_grafico_columnas_trimestre(df_consolidado),
-                        config={'displayModeBar': False}
+                        figure=crear_grafico_columnas_trimestre(df_consolidado)
                     )
                 ], className='chart-container-half'),
                 
@@ -133,8 +134,7 @@ app.layout = html.Div([
                     html.H3('Eficiencia del Presupuesto', className='chart-title'),
                     dcc.Graph(
                         id='grafico-radar',
-                        figure=crear_grafico_radar_eficiencia(df_consolidado),
-                        config={'displayModeBar': False}
+                        figure=crear_grafico_radar_eficiencia(df_consolidado)
                     )
                 ], className='chart-container-half')
             ], className='right-charts-container')
@@ -142,7 +142,7 @@ app.layout = html.Div([
     ], className='main-container')
 ], className='dashboard')
 
-# Callback para actualizar el dashboard (si necesitas interactividad futura)
+# Callback para actualizar el dashboard
 @app.callback(
     Output('velocimetro', 'figure'),
     Input('velocimetro', 'id')
@@ -151,7 +151,4 @@ def update_gauge(id):
     return crear_grafico_velocimetro(total_gastado, total_presupuesto)
 
 if __name__ == '__main__':
-
-    app.run(debug=True)
-
-
+    app.run_server(debug=True)
