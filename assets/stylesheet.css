@@ -72,34 +72,36 @@ body {
     gap: 20px;
 }
 
-/* Contenedores de métricas */
-.metric-container {
-    background: rgba(27, 27, 45, 0.8);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid #94F8FD;
-    box-shadow: 0 4px 15px rgba(148, 248, 253, 0.1);
-    height: 280px;
-    max-height: 280px;
-    overflow: hidden;
-}
-
+/* Contenedor específico para el velocímetro - FIX para producción */
 .gauge-container {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     padding: 15px;
+    position: relative;
+    overflow: hidden !important;
 }
 
-.metrics-container-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    width: 100%;
+/* FIX: Forzar tamaño del gráfico del velocímetro */
+.gauge-container .js-plotly-plot,
+.gauge-container .plot-container,
+.gauge-container .svg-container,
+.gauge-container .main-svg {
+    max-height: 220px !important;
+    height: 220px !important;
+    overflow: hidden !important;
 }
 
-/* Tarjetas de métricas grandes (mismo tamaño que velocímetro) */
+.gauge-chart {
+    width: 100% !important;
+    height: 220px !important;
+    max-height: 220px !important;
+    display: block !important;
+    position: relative !important;
+}
+
+/* Tarjetas de métricas grandes */
 .metric-card-large {
     background: rgba(27, 27, 45, 0.9);
     border-radius: 15px;
@@ -123,15 +125,34 @@ body {
     box-shadow: 0 6px 20px rgba(148, 248, 253, 0.3);
 }
 
-/* Iconos de las métricas */
-.metric-icon {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    width: 90px;
-    height: 90px;
+/* Iconos emoji como alternativa a las imágenes PNG */
+.metric-icon-emoji {
+    font-size: 60px;
+    margin-bottom: 15px;
     opacity: 0.8;
-    filter: brightness(0) saturate(100%) invert(75%) sepia(84%) saturate(379%) hue-rotate(145deg) brightness(102%) contrast(98%);
+    filter: grayscale(0.2);
+}
+
+/* Alternativa: Iconos generados con CSS */
+.metric-icon-css {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #94F8FD 0%, #5AC8CD 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.metric-icon-css::before {
+    content: '';
+    position: absolute;
+    width: 35px;
+    height: 35px;
+    background: #13121D;
+    border-radius: 50%;
 }
 
 .metric-value {
@@ -151,19 +172,6 @@ body {
     margin-top: 10px;
 }
 
-/* Iconos */
-.icon-percent::before,
-.icon-money::before,
-.icon-budget::before {
-    content: '';
-    display: block;
-    width: 40px;
-    height: 40px;
-    margin: 0 auto 10px;
-    background-color: #94F8FD;
-    border-radius: 50%;
-}
-
 /* Contenedores de gráficos */
 .chart-container {
     background: rgba(27, 27, 45, 0.8);
@@ -180,6 +188,25 @@ body {
     margin-bottom: 15px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+}
+
+/* Contenedor para los gráficos del lado derecho */
+.right-charts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    height: 100%;
+}
+
+/* Contenedores de gráficos de mitad de altura */
+.chart-container-half {
+    background: rgba(27, 27, 45, 0.8);
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid #94F8FD;
+    box-shadow: 0 4px 15px rgba(148, 248, 253, 0.1);
+    flex: 1;
+    min-height: 280px;
 }
 
 /* Tabla */
@@ -265,22 +292,21 @@ body {
     min-width: 400px;
 }
 
-/* Animaciones */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+/* FIX: Prevenir overflow de Plotly en producción */
+.js-plotly-plot {
+    position: relative !important;
 }
 
-.metric-card,
-.chart-container,
-.table-container {
-    animation: fadeIn 0.6s ease-out;
+.plotly {
+    position: relative !important;
+}
+
+.svg-container {
+    position: relative !important;
+}
+
+.main-svg {
+    overflow: hidden !important;
 }
 
 /* Scrollbar personalizada */
@@ -308,10 +334,12 @@ body {
     .top-section {
         grid-template-columns: 1fr;
         gap: 20px;
+        height: auto;
     }
     
-    .metrics-container-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .metric-card-large {
+        min-height: 200px;
+        height: auto;
     }
     
     .middle-section {
@@ -322,6 +350,15 @@ body {
     .bottom-section {
         grid-template-columns: 1fr;
         gap: 20px;
+    }
+    
+    .right-charts-container {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .chart-container-half {
+        min-height: 300px;
     }
 }
 
@@ -334,13 +371,8 @@ body {
         font-size: 28px;
     }
     
-    .metrics-container-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .metric-card-large {
-        min-height: 200px;
+    .metric-icon-emoji {
+        font-size: 40px;
     }
     
     .data-table {
@@ -353,27 +385,23 @@ body {
     }
 }
 
-/* Estilo específico para el gráfico del velocímetro */
-.gauge-chart {
-    width: 100% !important;
-    height: 100% !important;
-    max-height: 220px !important;
-    display: block !important;
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-/* Prevenir overflow del gráfico */
-.js-plotly-plot {
-    height: 220px !important;
-    max-height: 220px !important;
-}
-
-.plotly {
-    height: 220px !important;
-    max-height: 220px !important;
-}
-
-.main-svg {
-    overflow: hidden !important;
+.metric-card-large,
+.chart-container,
+.table-container,
+.chart-container-half {
+    animation: fadeIn 0.6s ease-out;
 }
 
 /* Loading animation */
@@ -393,76 +421,10 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* Tooltips personalizados */
-.custom-tooltip {
-    background: rgba(27, 27, 45, 0.95) !important;
-    border: 1px solid #94F8FD !important;
-    border-radius: 8px !important;
-    color: #94F8FD !important;
-    font-family: 'Segoe UI', sans-serif !important;
-    font-size: 12px !important;
-    padding: 8px !important;
-}
-
-/* Estilos adicionales para los indicadores */
-.indicator-wrapper {
-    position: relative;
-    display: inline-block;
-}
-
-.indicator-label {
-    position: absolute;
-    top: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    color: #94F8FD;
-    opacity: 0.7;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-/* Gradientes para fondos */
-.gradient-bg {
-    background: linear-gradient(135deg, 
-        rgba(148, 248, 253, 0.1) 0%, 
-        rgba(27, 27, 45, 0.8) 50%, 
-        rgba(19, 18, 29, 0.9) 100%);
-}
-
-/* Sombras mejoradas */
-.elevated {
-    box-shadow: 
-        0 4px 15px rgba(148, 248, 253, 0.2),
-        0 8px 30px rgba(19, 18, 29, 0.5),
-        inset 0 1px 0 rgba(148, 248, 253, 0.1);
-}
-
 /* Transiciones suaves */
-* {
+.metric-card-large,
+.chart-container,
+.chart-container-half,
+.table-container {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-.bottom-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 20px;
-}
-
-/* Contenedor para los gráficos del lado derecho */
-.right-charts-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    height: 100%;
-}
-
-/* Contenedores de gráficos de mitad de altura */
-.chart-container-half {
-    background: rgba(27, 27, 45, 0.8);
-    border-radius: 15px;
-    padding: 20px;
-    border: 1px solid #94F8FD;
-    box-shadow: 0 4px 15px rgba(148, 248, 253, 0.1);
-    flex: 1;
-    min-height: 280px;
 }
