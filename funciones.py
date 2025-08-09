@@ -433,4 +433,4 @@ def crear_grafico_radar_eficiencia(df_consolidado):
         )
     )
     
-    return fig
+    return fig 
