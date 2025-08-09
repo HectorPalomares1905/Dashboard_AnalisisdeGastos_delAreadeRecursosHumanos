@@ -13,7 +13,13 @@ from funciones import (
     crear_grafico_columnas_trimestre,
     crear_grafico_radar_eficiencia
 )
+PERCENTAGE_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxjaXJjbGUgY3g9IjE5IiBjeT0iNSIgcj0iMiIvPjxjaXJjbGUgY3g9IjUiIGN5PSIxOSIgcj0iMiIvPjxwYXRoIGQ9Ik01IDctMTkgMTciLz48L3N2Zz4="
 
+BUDGET_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxyZWN0IHg9IjIiIHk9IjciIHdpZHRoPSIyMCIgaGVpZ2h0PSIxNCIgcng9IjIiIHJ5PSIyIi8+PHBhdGggZD0iTTEyIDExdjYiLz48cGF0aCBkPSJNOSAxNGg2Ii8+PC9zdmc+"
+
+MONEY_ICON = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI5MCIgaGVpZ2h0PSI5MCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM5NEY4RkQiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIiBvcGFjaXR5PSIwLjMiPjxsaW5lIHgxPSIxMiIgeTE9IjEiIHgyPSIxMiIgeTI9IjIzIi8+PHBhdGggZD0iTTE3IDVINy41YTMuNSAzLjUgMCAwIDAgMCA3aDVhMy41IDMuNSAwIDAgMSAwIDdINiIvPjwvc3ZnPg=="
+
+# Inicializar la aplicación Dash
 # Inicializar la aplicación Dash
 app = dash.Dash(__name__, 
                 assets_folder='assets',  # Especifica la carpeta de assets
@@ -51,19 +57,19 @@ app.layout = html.Div([
             
             # Columnas de métricas - mismo tamaño que el velocímetro
             html.Div([
-                html.Img(src='/assets/images/percentage-icon.png', className='metric-icon'),
+                html.Img(src=PERCENTAGE_ICON, className='metric-icon'),
                 html.H2(f'{porcentaje_gasto:.1f} %', className='metric-value'),
                 html.P('% DE GASTO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/budget-icon.png', className='metric-icon'),
+                html.Img(src=BUDGET_ICON, className='metric-icon'),
                 html.H2(f'{saldo:,.0f}', className='metric-value'),
                 html.P('SALDO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/money-icon.png', className='metric-icon'),
+                html.Img(src=MONEY_ICON, className='metric-icon'),
                 html.H2(f'{total_presupuesto:,.0f}', className='metric-value'),
                 html.P('TOTAL PRESUPUESTO', className='metric-label')
             ], className='metric-card-large')
@@ -147,4 +153,5 @@ def update_gauge(id):
 if __name__ == '__main__':
 
     app.run(debug=True)
+
 
