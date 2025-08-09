@@ -1,0 +1,14 @@
+dash
+dash-core-components
+dash-html-components
+dash-table
+pandas
+numpy
+openpyxl
+plotly
+python-dateutil
+gunicorn
+werkzeug
+pytz
+six
+xlrd
