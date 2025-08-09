@@ -15,7 +15,9 @@ from funciones import (
 )
 
 # Inicializar la aplicación Dash
-app = dash.Dash(__name__)
+app = dash.Dash(__name__, 
+                assets_folder='assets',  # Especifica la carpeta de assets
+                assets_url_path='/assets/') 
 
 # Cargar y procesar los datos
 df_gastos, df_presupuesto, df_calendario, df_consolidado = cargar_datos()
@@ -145,3 +147,4 @@ def update_gauge(id):
 if __name__ == '__main__':
 
     app.run(debug=True)
+
