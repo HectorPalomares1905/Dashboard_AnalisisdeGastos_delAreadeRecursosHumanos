@@ -43,7 +43,7 @@ app.layout = html.Div([
                     figure=crear_grafico_velocimetro(total_gastado, total_presupuesto),
                     className='gauge-chart',
                     config={'displayModeBar': False, 'responsive': True},
-                    style={'height': '240px', 'width': '100%'}
+                    style={'height': '120px', 'width': '50%'}
                 )
             ], className='metric-card-large gauge-container'),
             
@@ -145,3 +145,4 @@ def update_gauge(id):
 if __name__ == '__main__':
 
     app.run_server(debug=True)
+
