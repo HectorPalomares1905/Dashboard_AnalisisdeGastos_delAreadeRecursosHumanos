@@ -49,19 +49,19 @@ app.layout = html.Div([
             
             # Columnas de métricas - mismo tamaño que el velocímetro
             html.Div([
-                html.Img(src='/assets/images/percentage-icon.png', className='metric-icon'),
+                html.Img(src='/assets/Images/percentage-icon.png', className='metric-icon'),
                 html.H2(f'{porcentaje_gasto:.1f} %', className='metric-value'),
                 html.P('% DE GASTO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/budget-icon.png', className='metric-icon'),
+                html.Img(src='/assets/Images/budget-icon.png', className='metric-icon'),
                 html.H2(f'{saldo:,.0f}', className='metric-value'),
                 html.P('SALDO', className='metric-label')
             ], className='metric-card-large'),
             
             html.Div([
-                html.Img(src='/assets/images/money-icon.png', className='metric-icon'),
+                html.Img(src='/assets/Images/money-icon.png', className='metric-icon'),
                 html.H2(f'{total_presupuesto:,.0f}', className='metric-value'),
                 html.P('TOTAL PRESUPUESTO', className='metric-label')
             ], className='metric-card-large')
@@ -143,4 +143,5 @@ def update_gauge(id):
     return crear_grafico_velocimetro(total_gastado, total_presupuesto)
 
 if __name__ == '__main__':
+
     app.run_server(debug=True)
